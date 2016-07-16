@@ -75,6 +75,7 @@ describe 'ClumsyBrunch', ->
           div !{content}
       """
 
+      #coffeelint: disable=max_line_length
       output = """
       <!DOCTYPE html>
       <html>
@@ -94,6 +95,7 @@ describe 'ClumsyBrunch', ->
         </body>
       </html>
       """
+      #coffeelint: enable=max_line_length
 
       data = cb.grabFrontAndContent input_md
       expect(cb.applyTemplate jade_template, data).to.equal output
