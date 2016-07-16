@@ -6,6 +6,7 @@ ClumsyBrunch = require '../src/index'
 
 describe 'ClumsyBrunch', ->
   cb = new ClumsyBrunch
+  fldata = fs.readFileSync 'test/data/sample_trivial.md', 'utf-8'
 
   it 'should be a brunch plugin', ->
     assert.isTrue cb.brunchPlugin
@@ -17,7 +18,6 @@ describe 'ClumsyBrunch', ->
       assert.isObject cb.grabFrontAndContent ''
 
     it 'extracts the yaml frontmatter', ->
-      fldata = fs.readFileSync 'test/data/sample_trivial.md', 'utf-8'
       result = cb.grabFrontAndContent fldata
       assert.equal 'bar', result.foo
       assert.equal 10, result.baz
