@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "6"
+  - "5"
+notifications:
+  email:
+    recipients: prashant@noop.pw
+    on_success: change
+    on_failure: change
+

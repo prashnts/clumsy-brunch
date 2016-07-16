@@ -1,0 +1,33 @@
+{
+  "name": "clumsy-brunch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prashnts/clumsy-brunch.git"
+  },
+  "author": "Prashant Sinha",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/prashnts/clumsy-brunch/issues"
+  },
+  "homepage": "https://github.com/prashnts/clumsy-brunch#readme",
+  "dependencies": {
+    "highlight.js": "^9.5.0",
+    "lodash": "^4.13.1",
+    "marked": "^0.3.5",
+    "pug": "^2.0.0-beta3",
+    "slug": "^0.9.1",
+    "typeset": "^0.2.2",
+    "yaml-front-matter": "^3.4.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "coffee-script": "^1.10.0",
+    "mocha": "^2.5.3"
+  }
+}
