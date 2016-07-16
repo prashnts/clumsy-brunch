@@ -28,3 +28,22 @@ describe 'ClumsyBrunch', ->
   describe '#compileMarkdown', ->
     it 'should return string', ->
       expect(cb.compileMarkdown('')).to.be.a('string')
+
+    it 'should produce correct html', ->
+      input = 'Hey *kids*, let\'s have ice creams!'
+      output = '<p>Hey <em>kids</em>, let&#39;s have ice creams!</p>\n'
+      expect(cb.compileMarkdown(input)).to.equal(output)
+
+    it 'should apply syntax highlighting', ->
+      input = """
+      Here's a beautiful Python Code for my love:
+      ```Python
+      data = [x**2 for x in range(len(100))]
+      ```
+      """
+      output = """
+      <p>Here&#39;s a beautiful Python Code for my love:</p>
+      <pre><code class="lang-Python">data = [x**<span class="hljs-number">2</span> <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-keyword">range</span>(len(<span class="hljs-number">100</span>))]
+      </code></pre>\n
+      """
+      expect(cb.compileMarkdown(input)).to.equal(output)
