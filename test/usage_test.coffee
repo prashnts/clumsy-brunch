@@ -24,3 +24,7 @@ describe 'ClumsyBrunch', ->
       assert.deepEqual ['bah', 'humbug'], result.bok
 
       expect(result.content).to.be.a('string').and.have.length.above(10)
+
+  describe '#compileMarkdown', ->
+    it 'should return string', ->
+      expect(cb.compileMarkdown('')).to.be.a('string')
