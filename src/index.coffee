@@ -1,6 +1,8 @@
 yaml_front = require 'yaml-front-matter'
 highlight = require 'highlight.js'
 marked = require 'marked'
+pug = require 'pug'
+_assign = require 'lodash/assign'
 
 
 module.exports = class ClumsyBrunch
@@ -10,25 +12,32 @@ module.exports = class ClumsyBrunch
 
   staticTargetExtension: 'html'
 
+  marked:
+    gfm: yes
+
+  pug:
+    pretty: yes
 
   constructor: (conf) ->
-    @marked = marked
+    @_marked_ = marked
     @_initMarkdown_()
 
   _initMarkdown_: ->
-    options =
-      highlight: (code, lang) ->
-        if lang in highlight.listLanguages()
-          highlight.highlight(lang, code).value
-        else
-          highlight.highlightAuto(code).value
-    @marked.setOptions(options)
-
+    @marked.highlight = (code, lang) ->
+      if lang in highlight.listLanguages()
+        highlight.highlight(lang, code).value
+      else
+        highlight.highlightAuto(code).value
+    @_marked_.setOptions(@marked)
 
   grabFrontAndContent: (input) ->
-    yaml_front.loadFront input, 'content'
+    data = yaml_front.loadFront input, 'content'
+    data.content = @compileMarkdown data.content
+    data
 
   compileMarkdown: (input) ->
-    @marked input
+    @_marked_ input
 
-  applyTemplates: (input) ->
+  applyTemplate: (template, data) ->
+    opts = _assign data, @pug
+    pug.render template, opts

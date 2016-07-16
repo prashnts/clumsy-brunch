@@ -49,3 +49,51 @@ describe 'ClumsyBrunch', ->
       """
       #coffeelint: enable=max_line_length
       expect(cb.compileMarkdown(input)).to.equal(output)
+
+  describe '#applyTemplate', ->
+    it 'should compile the jade file with frontmatter data', ->
+      input_md = """
+      ---
+      title: Whoa, whoa
+      dated: 10 July, 2016
+      ---
+      > You must forge your own path for it to mean anything.
+
+      ```python
+      class Path:
+        @property
+        def meaning(self):
+          return 42
+      ```
+      """
+      jade_template = """
+      doctype html
+      html
+        head
+          title= title
+        body
+          div !{content}
+      """
+
+      output = """
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Whoa, whoa</title>
+        </head>
+        <body>
+          <div><blockquote>
+      <p>You must forge your own path for it to mean anything.</p>
+      </blockquote>
+      <pre><code class="lang-python"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Path</span>:</span>
+      <span class="hljs-meta">  @property</span>
+        <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">meaning</span><span class="hljs-params">(self)</span>:</span>
+          <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>
+      </code></pre>
+      </div>
+        </body>
+      </html>
+      """
+
+      data = cb.grabFrontAndContent input_md
+      expect(cb.applyTemplate jade_template, data).to.equal output
