@@ -11,4 +11,3 @@ module.exports = class ClumsyBrunch
 
 
   constructor: (conf) ->
-    null
