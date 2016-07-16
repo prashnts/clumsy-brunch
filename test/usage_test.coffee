@@ -41,9 +41,11 @@ describe 'ClumsyBrunch', ->
       data = [x**2 for x in range(len(100))]
       ```
       """
+      #coffeelint: disable=max_line_length
       output = """
       <p>Here&#39;s a beautiful Python Code for my love:</p>
       <pre><code class="lang-Python">data = [x**<span class="hljs-number">2</span> <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-keyword">range</span>(len(<span class="hljs-number">100</span>))]
       </code></pre>\n
       """
+      #coffeelint: enable=max_line_length
       expect(cb.compileMarkdown(input)).to.equal(output)
