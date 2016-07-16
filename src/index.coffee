@@ -11,3 +11,6 @@ module.exports = class ClumsyBrunch
 
 
   constructor: (conf) ->
+
+  grabFrontAndContent: (input) ->
+    yaml_front.loadFront input, 'content'
