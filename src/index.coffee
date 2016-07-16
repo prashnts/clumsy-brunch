@@ -12,6 +12,12 @@ module.exports = class ClumsyBrunch
 
   staticTargetExtension: 'html'
 
+  template_path: 'templates'
+  wrap_html: yes
+  slugify: yes
+  target: ''
+  categorize: yes
+
   marked:
     gfm: yes
 
