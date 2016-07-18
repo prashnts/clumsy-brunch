@@ -5,8 +5,11 @@ marked = require 'marked'
 pug = require 'pug'
 slug = require 'slug'
 _assign = require 'lodash/assign'
+_has = require 'lodash/has'
+_find = require 'lodash/find'
 mkdirp = require 'mkdirp'
 fs = require 'fs'
+path = require 'path'
 moment = require 'moment'
 
 
@@ -18,15 +21,15 @@ module.exports = class ClumsyBrunch
   paths:
     layouts: 'layouts'
     content: 'content'
+    public: 'public'
+    root: 'blog'
 
   fields:
     title: 'title'
     date: 'published'
-    category: 'category'
 
   wrap_html: yes
   slugify: yes
-  categorize: yes
 
   marked:
     gfm: yes
@@ -75,18 +78,41 @@ module.exports = class ClumsyBrunch
     )
     unless proceed then return
 
-    destination = null
+    payload = @grabFrontAndContent file.data
 
+    unless payload.path? or not _has(payload, [@fields.title, @fields.date])
+      throw error: 'Required fields not found'
 
-    data = @grabFrontAndContent file.data
-    title_slug = slug(data.title, @slug)
-    dates = moment(data.published).format('Y/MM/DD')
-    path = "#{@pub_path}/#{dates}/#{title_slug}"
+    if payload.layout?
+      format_layout = (dir) => "#{dir}/#{@paths.layouts}/#{payload.layout}.jade"
+      dir = _find @paths.watched, (dir) ->
+        fs.statSync(format_layout(dir)).isFile()
 
-    if data.layout?
-      template_path = "#{@layout_root}/layouts/#{data.layout}.jade"
-      data.content = @applyTemplate template_path, data
+      unless dir then throw error: 'Cannot locate layout'
 
-    mkdirp path, (er) ->
-      fs.writeFile "#{path}/index.html", data.content, (er) ->
-        console.log 'Done.'
+      payload.content = @applyTemplate format_layout(dir), payload
+
+    destination = do =>
+      base_name = path.basename(file.path, @extension)
+      dir_name = "#{@paths.public}"
+      if payload.path?
+        dir_name += "/#{payload.path}"
+      else
+        slug_name = slug(payload[@fields.title], @slug)
+        date_dirs = moment(payload[@fields.date]).format('Y/MM/DD')
+        dir_name += "/#{@paths.root}/#{date_dirs}"
+
+        if @wrap_html
+          dir_name += "/#{slug_name}"
+          base_name = 'index'
+        else
+          base_name = slug_name
+
+      return dir: dir_name, name: base_name
+
+    mkdirp.sync destination.dir
+
+    outfile = "#{destination.dir}/#{destination.name}.html"
+
+    fs.writeFileSync outfile, payload.content
+
