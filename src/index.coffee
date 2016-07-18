@@ -1,16 +1,15 @@
-
-yaml_front = require 'yaml-front-matter'
+_assign = require 'lodash/assign'
+_find = require 'lodash/find'
+_has = require 'lodash/has'
+fs = require 'fs'
 highlight = require 'highlight.js'
 marked = require 'marked'
+mkdirp = require 'mkdirp'
+moment = require 'moment'
+path = require 'path'
 pug = require 'pug'
 slug = require 'slug'
-_assign = require 'lodash/assign'
-_has = require 'lodash/has'
-_find = require 'lodash/find'
-mkdirp = require 'mkdirp'
-fs = require 'fs'
-path = require 'path'
-moment = require 'moment'
+yaml_front = require 'yaml-front-matter'
 
 
 module.exports = class ClumsyBrunch
