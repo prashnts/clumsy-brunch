@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index",
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register"
+    "test": "mocha && istanbul report text-summary lcov"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,11 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "codeclimate-test-reporter": "^0.3.3",
+    "coffee-coverage": "^1.0.1",
     "coffee-script": "^1.10.0",
+    "coveralls": "^2.11.11",
+    "istanbul": "^0.4.4",
     "mocha": "^2.5.3"
   }
 }
