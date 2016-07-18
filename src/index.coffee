@@ -17,6 +17,7 @@ module.exports = class ClumsyBrunch
   brunchPlugin: yes
   type: 'template'
   extension: 'md'
+  outExtension: 'html'
 
   paths:
     layouts: 'layouts'
@@ -28,7 +29,7 @@ module.exports = class ClumsyBrunch
     title: 'title'
     date: 'published'
 
-  wrap_html: yes
+  wrapHTML: yes
   slugify: yes
 
   marked:
@@ -93,7 +94,7 @@ module.exports = class ClumsyBrunch
       payload.content = @applyTemplate format_layout(dir), payload
 
     destination = do =>
-      base_name = path.basename(file.path, @extension)
+      base_name = path.basename(file.path, ".#{@extension}")
       dir_name = "#{@paths.public}"
       if payload.path?
         dir_name += "/#{payload.path}"
@@ -102,7 +103,7 @@ module.exports = class ClumsyBrunch
         date_dirs = moment(payload[@fields.date]).format('Y/MM/DD')
         dir_name += "/#{@paths.root}/#{date_dirs}"
 
-        if @wrap_html
+        if @wrapHTML
           dir_name += "/#{slug_name}"
           base_name = 'index'
         else
@@ -112,7 +113,7 @@ module.exports = class ClumsyBrunch
 
     mkdirp.sync destination.dir
 
-    outfile = "#{destination.dir}/#{destination.name}.html"
+    outfile = "#{destination.dir}/#{destination.name}.#{@outExtension}"
 
     fs.writeFileSync outfile, payload.content
 
