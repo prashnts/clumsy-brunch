@@ -1,8 +1,13 @@
+
 yaml_front = require 'yaml-front-matter'
 highlight = require 'highlight.js'
 marked = require 'marked'
 pug = require 'pug'
+slug = require 'slug'
 _assign = require 'lodash/assign'
+mkdirp = require 'mkdirp'
+fs = require 'fs'
+moment = require 'moment'
 
 
 module.exports = class ClumsyBrunch
@@ -10,12 +15,17 @@ module.exports = class ClumsyBrunch
   type: 'template'
   extension: 'md'
 
-  staticTargetExtension: 'html'
+  paths:
+    layouts: 'layouts'
+    content: 'content'
 
-  template_path: 'templates'
+  fields:
+    title: 'title'
+    date: 'published'
+    category: 'category'
+
   wrap_html: yes
   slugify: yes
-  target: ''
   categorize: yes
 
   marked:
@@ -24,9 +34,14 @@ module.exports = class ClumsyBrunch
   pug:
     pretty: yes
 
-  constructor: (conf) ->
+  slug:
+    mode: 'rfc3986'
+
+  constructor: (conf = {}) ->
     @_marked_ = marked
     @_initMarkdown_()
+    @paths.public = conf.paths?.public
+    @paths.watched = conf.paths?.watched
 
   _initMarkdown_: ->
     @marked.highlight = (code, lang) ->
@@ -46,4 +61,32 @@ module.exports = class ClumsyBrunch
 
   applyTemplate: (template, data) ->
     opts = _assign data, @pug
-    pug.render template, opts
+    pug.renderFile template, opts
+
+  compile: (file) ->
+    @processFile(file)
+    Promise.resolve()
+
+  processFile: (file) ->
+    proceed = @paths.watched.reduce(
+      (prev, curr) =>
+        prev or file.path.startsWith("#{curr}/#{@paths.content}")
+      no
+    )
+    unless proceed then return
+
+    destination = null
+
+
+    data = @grabFrontAndContent file.data
+    title_slug = slug(data.title, @slug)
+    dates = moment(data.published).format('Y/MM/DD')
+    path = "#{@pub_path}/#{dates}/#{title_slug}"
+
+    if data.layout?
+      template_path = "#{@layout_root}/layouts/#{data.layout}.jade"
+      data.content = @applyTemplate template_path, data
+
+    mkdirp path, (er) ->
+      fs.writeFile "#{path}/index.html", data.content, (er) ->
+        console.log 'Done.'

@@ -66,14 +66,6 @@ describe 'ClumsyBrunch', ->
           return 42
       ```
       """
-      jade_template = """
-      doctype html
-      html
-        head
-          title= title
-        body
-          div !{content}
-      """
 
       #coffeelint: disable=max_line_length
       output = """
@@ -96,6 +88,7 @@ describe 'ClumsyBrunch', ->
       </html>
       """
       #coffeelint: enable=max_line_length
+      jade_template = './test/data/layout.jade'
 
       data = cb.grabFrontAndContent input_md
       expect(cb.applyTemplate jade_template, data).to.equal output
