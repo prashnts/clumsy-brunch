@@ -12,17 +12,44 @@ describe 'Tree', ->
   beforeEach 'clear the tree', -> tree.clear()
 
   describe '#insert', ->
+    it 'adds entries with valid props', ->
+      tree.insert 'foo'
+      expect(tree.children().foo.isFile()).to.be.true
+
     it 'adds entry in tree', ->
-      tree.insert 'a/b/c.html'
-      expect(tree.tree).to.deep.equal a: b: c_html: ['c', '.html']
+      tree.insert 'foo/index.html'
+      expect(tree.children().foo.children()['index.html'].isFile()).to.be.true
 
     it 'appends entries together', ->
-      tree.insert 'a/b.html'
-      tree.insert 'a/c.html'
-      tree.insert 'a/b/d.html'
+      tree.insert 'foo/bar.html'
+      tree.insert 'baz.html'
+      expect(tree.children().foo.isDir()).to.be.true
+      expect(tree.children()['baz.html'].isFile()).to.be.true
 
-      expect(tree.tree).to.deep.equal
-        a:
-          b: d_html: ['d', '.html']
-          b_html: ['b', '.html']
-          c_html: ['c', '.html']
+  describe '#isRoot', ->
+    it 'assumes self to be root if no parent found', ->
+      expect(tree.isRoot()).to.be.true
+
+    it 'knows self to be a children if parent exists', ->
+      tree.insert 'baz'
+      expect(tree.children().baz.isRoot()).to.be.false
+
+  describe '#parent', ->
+    it 'knows parent object', ->
+      tree.insert 'baz'
+      expect(tree.children().baz.parent.isRoot())
+
+  describe '#url', ->
+    it 'gets root url', ->
+      expect(tree.url()).to.equal('')
+
+    it 'gets children url', ->
+      tree.insert 'baz'
+      expect(tree.children().baz.url()).to.equal('baz')
+      tree.insert 'foo/bar/index.html'
+      expect(tree.children().foo.children().bar.children()['index.html'].url())
+        .to.equal('foo/bar')
+      tree.insert 'foo/bar/baz.html'
+      expect(tree.children().foo.children().bar.children()['baz.html'].url())
+        .to.equal('foo/bar/baz.html')
+      expect(tree.children().foo.children().bar.url()).to.equal('foo/bar')
