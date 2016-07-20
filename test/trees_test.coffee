@@ -26,6 +26,15 @@ describe 'Tree', ->
       expect(tree.children().foo.isDir()).to.be.true
       expect(tree.children()['baz.html'].isFile()).to.be.true
 
+    it 'can add any value to files', ->
+      tree.insert 'bar', title: 'yello!'
+      expect(tree.children().bar.content().title).to.equal('yello!')
+
+    it 'throws errors when children is expected on files', ->
+      tree.insert 'bar'
+      expect(-> tree.children().bar.children()).to.throw(TypeError)
+
+
   describe '#isRoot', ->
     it 'assumes self to be root if no parent found', ->
       expect(tree.isRoot()).to.be.true

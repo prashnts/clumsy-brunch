@@ -117,5 +117,7 @@ module.exports = class ClumsyBrunch
 
     outfile = "#{destination.dir}/#{destination.name}.#{@outExtension}"
 
+    @tree.insert outfile, payload
+
     fs.writeFileSync outfile, payload.content
 

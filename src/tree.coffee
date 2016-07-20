@@ -22,9 +22,14 @@ class Tree
       @tree[root].insert child_node
 
   clear: ->
-    @tree = {}
+    @tree = _dir: yes
 
   children: ->
+    if @isFile() then throw new TypeError 'not a directory'
+    @tree
+
+  content: ->
+    unless @isFile() then throw new TypeError 'is a directory'
     @tree
 
   url: (omit_index = yes) ->
@@ -36,7 +41,7 @@ class Tree
 
 
   isFile: -> not @isDir()
-  isDir: -> @tree._dir?
+  isDir: -> @tree._dir? is yes
   isRoot: -> not @parent?
 
 module.exports = Tree
