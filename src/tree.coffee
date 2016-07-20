@@ -3,20 +3,22 @@ path = require 'path'
 
 
 class Tree
-  constructor: (parent, name, init = {}) ->
-    @parent = parent
-    @name = name
-    @tree = init
+  constructor: (props = {}) ->
+    dirTree = _dir: yes
+    {@parent, @name, @tree = dirTree} = props
 
-  insert: (node) ->
+  insert: (node, val) ->
     [root, child...] = node.split(path.sep)
 
     if child.length is 0
-      @tree[root] = new Tree(@, root, root)
+      @tree[root] = new Tree
+        parent: @
+        name: root
+        tree: if val? then val else root
     else
       child_node = child.join(path.sep)
 
-      unless @tree[root]? then @tree[root] = new Tree(@, root)
+      unless @tree[root]? then @tree[root] = new Tree parent: @, name: root
       @tree[root].insert child_node
 
   clear: ->
@@ -33,8 +35,8 @@ class Tree
     _compact([base, @name]).join '/'
 
 
-  isFile: -> typeof @tree is 'string'
-  isDir: -> not @isFile()
+  isFile: -> not @isDir()
+  isDir: -> @tree._dir?
   isRoot: -> not @parent?
 
 module.exports = Tree

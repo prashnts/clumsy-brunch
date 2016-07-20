@@ -11,6 +11,8 @@ pug = require 'pug'
 slug = require 'slug'
 yaml_front = require 'yaml-front-matter'
 
+Tree = require './tree'
+
 
 module.exports = class ClumsyBrunch
   brunchPlugin: yes
@@ -45,6 +47,7 @@ module.exports = class ClumsyBrunch
     @_initMarkdown_()
     @paths.public = conf.paths?.public
     @paths.watched = conf.paths?.watched
+    @tree = new Tree name: @paths.root
 
   _initMarkdown_: ->
     @marked.highlight = (code, lang) ->
