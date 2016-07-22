@@ -5,8 +5,5 @@ node_js:
 after_success:
   - 'cat ./coverage/lcov.info | ./node_modules/.bin/codeclimate-test-reporter'
 notifications:
-  email:
-    recipients: prashant@noop.pw
-    on_success: change
-    on_failure: change
-
+  email: false
+  slack: noop-fa:zbwZeeSi5kgDshj6FO4BkNZU

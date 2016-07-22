@@ -34,7 +34,6 @@ describe 'Tree', ->
       tree.insert 'bar'
       expect(-> tree.children().bar.children()).to.throw(TypeError)
 
-
   describe '#isRoot', ->
     it 'assumes self to be root if no parent found', ->
       expect(tree.isRoot()).to.be.true
@@ -62,3 +61,10 @@ describe 'Tree', ->
       expect(tree.children().foo.children().bar.children()['baz.html'].url())
         .to.equal('foo/bar/baz.html')
       expect(tree.children().foo.children().bar.url()).to.equal('foo/bar')
+
+  describe '#files', ->
+    it 'gets flat file tree', ->
+      tree.insert 'foo/bar'
+      tree.insert 'foo/baz/bax'
+      tree.insert 'baz/bax'
+      console.log tree.files()

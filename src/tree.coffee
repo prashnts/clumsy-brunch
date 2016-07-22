@@ -1,4 +1,5 @@
 _compact = require 'lodash/compact'
+_flatMapDeep = require 'lodash/flatMapDeep'
 path = require 'path'
 
 
@@ -31,6 +32,12 @@ class Tree
   content: ->
     unless @isFile() then throw new TypeError 'is a directory'
     @tree
+
+  files: ->
+    if @isFile()
+      @url()
+    else
+      (child.files() for _, child of @children() when child.files?)
 
   url: (omit_index = yes) ->
     base = if @parent then @parent.url()
