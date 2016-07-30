@@ -20,6 +20,10 @@ describe 'Tree', ->
       tree.insert 'foo/index.html'
       expect(tree.children().foo.children()['index.html'].isFile()).to.be.true
 
+    it 'adds entry with props in tree', ->
+      tree.insert 'foo/bar', 'banana!'
+      expect(tree.children().foo.children().bar.content()).to.equal('banana!')
+
     it 'appends entries together', ->
       tree.insert 'foo/bar.html'
       tree.insert 'baz.html'
