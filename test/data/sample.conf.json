@@ -1,0 +1,193 @@
+{
+  "files":{
+    "javascripts":{
+      "joinTo":"js/app.js"
+    },
+    "stylesheets":{
+      "joinTo":"css/app.css"
+    }
+  },
+  "paths":{
+    "root":".",
+    "public":"public",
+    "watched":[
+      "app",
+      "test",
+      "vendor"
+    ],
+    "packageConfig":"package.json",
+    "bowerConfig":"bower.json",
+    "config":"brunch-config"
+  },
+  "npm":{
+    "enabled":true,
+    "static":[
+
+    ],
+    "compilers":[
+
+    ],
+    "detectProcess":true
+  },
+  "plugins":{
+    "on":[
+
+    ],
+    "off":[
+
+    ],
+    "only":[
+
+    ]
+  },
+  "conventions":{
+    "ignored":[
+      {
+
+      },
+      {
+
+      }
+    ],
+    "assets":{
+
+    },
+    "vendor":{
+
+    }
+  },
+  "modules":{
+    "wrapper":"commonjs",
+    "definition":"commonjs",
+    "autoRequire":{
+
+    }
+  },
+  "notifications":true,
+  "notificationsTitle":"Brunch",
+  "optimize":false,
+  "sourceMaps":true,
+  "server":{
+    "base":"",
+    "port":3333,
+    "run":false,
+    "hostname":"localhost",
+    "indexPath":"index.html",
+    "startupLogging":true,
+    "noPushState":false,
+    "noCors":false,
+    "stripSlashes":false,
+    "config":{
+
+    },
+    "publicPath":"public"
+  },
+  "fileListInterval":65,
+  "watcher":{
+    "usePolling":false
+  },
+  "hooks":{
+
+  },
+  "overrides":{
+    "production":{
+      "plugins":{
+        "autoReload":{
+          "enabled":false
+        }
+      },
+      "optimize":true,
+      "sourceMaps":false
+    }
+  },
+  "env":[
+
+  ],
+  "persistent":false,
+  "stdin":false,
+  "_normalized":{
+    "join":{
+      "javascripts":{
+        "*":{
+          "pluginHelpers":[
+            "js/app.js"
+          ]
+        }
+      },
+      "stylesheets":{
+        "*":{
+          "pluginHelpers":[
+            "css/app.css"
+          ]
+        }
+      }
+    },
+    "modules":{
+      "autoRequire":{
+
+      }
+    },
+    "conventions":{
+
+    },
+    "paths":{
+      "root":".",
+      "public":"public",
+      "watched":[
+        "app",
+        "test",
+        "vendor"
+      ],
+      "packageConfig":"package.json",
+      "bowerConfig":"bower.json",
+      "config":"brunch-config",
+      "possibleConfigFiles":{
+        "brunch-config.js":true,
+        "brunch-config.json":true,
+        "brunch-config.node":true,
+        "brunch-config.coffee":true,
+        "brunch-config.litcoffee":true,
+        "brunch-config.coffee.md":true
+      },
+      "allConfigFiles":[
+        "package.json",
+        "bower.json",
+        "brunch-config.js",
+        "brunch-config.json",
+        "brunch-config.node",
+        "brunch-config.coffee",
+        "brunch-config.litcoffee",
+        "brunch-config.coffee.md"
+      ]
+    },
+    "packageInfo":{
+      "npm":{
+        "components":[
+          {
+            "component":"___globals___",
+            "files":[
+
+            ]
+          },
+          {
+            "component":"npmStatic",
+            "files":[
+
+            ]
+          }
+        ]
+      },
+      "bower":{
+        "components":[
+
+        ],
+        "order":[
+
+        ]
+      }
+    },
+    "persistent":false,
+    "usePolling":false,
+    "awaitWriteFinish":false
+  }
+}
