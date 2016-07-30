@@ -15,12 +15,12 @@ class Tree
       @tree[root] = new Tree
         parent: @
         name: root
-        tree: val or true
+        tree: if val? then val else yes
     else
       child_node = child.join(path.sep)
 
       unless @tree[root]? then @tree[root] = new Tree parent: @, name: root
-      @tree[root].insert child_node
+      @tree[root].insert child_node, val
 
   clear: ->
     @tree = _dir: yes

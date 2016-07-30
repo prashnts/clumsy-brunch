@@ -122,4 +122,4 @@ module.exports = class ClumsyBrunch
     fs.writeFileSync outfile, payload.content
 
   onCompile: (args...) ->
-    console.log @tree
+    console.log @tree.index()

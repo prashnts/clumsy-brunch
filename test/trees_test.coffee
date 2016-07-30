@@ -56,10 +56,10 @@ describe 'Tree', ->
       expect(tree.children().baz.url()).to.equal('baz')
       tree.insert 'foo/bar/index.html'
       expect(tree.children().foo.children().bar.children()['index.html'].url())
-        .to.equal('foo/bar')
+          .to.equal('foo/bar')
       tree.insert 'foo/bar/baz.html'
       expect(tree.children().foo.children().bar.children()['baz.html'].url())
-        .to.equal('foo/bar/baz.html')
+          .to.equal('foo/bar/baz.html')
       expect(tree.children().foo.children().bar.url()).to.equal('foo/bar')
 
   describe '#index', ->
