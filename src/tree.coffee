@@ -15,7 +15,7 @@ class Tree
       @tree[root] = new Tree
         parent: @
         name: root
-        tree: if val? then val else root
+        tree: val or true
     else
       child_node = child.join(path.sep)
 
@@ -33,22 +33,25 @@ class Tree
     unless @isFile() then throw new TypeError 'is a directory'
     @tree
 
-  files: ->
+  index: ->
     if @isFile()
-      @url()
+      [[@url(), @tree]]
     else
-      (child.files() for _, child of @children() when child.files?)
+      content = []
+      for _, child of @children() when child.index?
+        content = content.concat child.index()
+      content
 
   url: (omit_index = yes) ->
     base = if @parent then @parent.url()
     if @isFile()
-      if omit_index and @tree is 'index.html'
+      if omit_index and @name is 'index.html'
         return base
     _compact([base, @name]).join '/'
 
 
   isFile: -> not @isDir()
-  isDir: -> @tree._dir? is yes
+  isDir: -> (typeof @tree is 'object') and (@tree._dir is true)
   isRoot: -> not @parent?
 
 module.exports = Tree

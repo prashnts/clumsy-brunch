@@ -62,9 +62,16 @@ describe 'Tree', ->
         .to.equal('foo/bar/baz.html')
       expect(tree.children().foo.children().bar.url()).to.equal('foo/bar')
 
-  describe '#files', ->
+  describe '#index', ->
     it 'gets flat file tree', ->
       tree.insert 'foo/bar'
       tree.insert 'foo/baz/bax'
       tree.insert 'baz/bax'
-      console.log tree.files()
+
+      expect(tree.index())
+          .to.deep.equal([
+              ['foo/bar', true],
+              ['foo/baz/bax', true],
+              ['baz/bax', true]])
+      expect(tree.children().foo.children().baz.index())
+          .to.deep.equal([['foo/baz/bax', true]])
