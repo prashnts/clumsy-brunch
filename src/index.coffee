@@ -109,11 +109,12 @@ module.exports = class ClumsyBrunch
       return yes
     throw new Error 'Payload missing required props.'
 
-  _ensureLayoutContentTransform: (payload) ->
+  applyLayoutContentTransform: (payload) ->
     unless payload.layout? then return payload.content
     format_layout = (dir) => "#{dir}/#{@paths.layouts}/#{payload.layout}.jade"
     dir = _find @paths.watched, (dir) ->
-      fs.statSync(format_layout(dir)).isFile()
+      try
+        fs.statSync(format_layout(dir)).isFile()
     unless dir then throw new Error 'Cannot locate layout'
     else @applyTemplate format_layout(dir), payload
 
@@ -123,7 +124,7 @@ module.exports = class ClumsyBrunch
     payload = @grabFrontAndContent file.data
     @_ensureFields(payload)
 
-    payload.content = @_ensureLayoutContentTransform(payload)
+    payload.content = @applyLayoutContentTransform(payload)
 
     destination = @_findDestination(file, payload)
 

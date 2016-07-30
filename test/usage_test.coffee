@@ -126,4 +126,33 @@ describe 'ClumsyBrunch within Fixture', ->
     it 'should throw error in all other cases', ->
       expect(-> cb._ensureFields(foo: 'bar')).to.throw(Error)
 
-  describe '#_ensureLayoutContentTransform', ->
+  describe '#applyLayoutContentTransform', ->
+    it 'should not apply any transformation if layout is not provided', ->
+      expect(cb.applyLayoutContentTransform content: 'banana')
+        .to.equal('banana')
+
+    it 'should throw exception if the layout file is not found', ->
+      expect(-> cb.applyLayoutContentTransform layout: 'foo', content: 'bar')
+        .to.throw(Error)
+
+    it 'should apply transformation in usual cases', ->
+      cb2 = new ClumsyBrunch conf
+      cb2.paths.watched.push 'test'
+      cb2.paths.layouts = 'data'
+      payload =
+        layout: 'layout'
+        content: '<h1>Hai</h1>'
+        title: 'Hai World'
+
+      output = """
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Hai World</title>
+        </head>
+        <body>
+          <div><h1>Hai</h1></div>
+        </body>
+      </html>
+      """
+      expect(cb2.applyLayoutContentTransform payload).to.equal(output)
