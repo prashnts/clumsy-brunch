@@ -74,7 +74,7 @@ module.exports = class ClumsyBrunch
 
   compile: (file) ->
     @processFile(file)
-    Promise.resolve()
+    Promise?.resolve?()
 
   _shouldProceed: (path) ->
     @paths.watched.reduce(
@@ -115,24 +115,19 @@ module.exports = class ClumsyBrunch
     dir = _find @paths.watched, (dir) ->
       try
         fs.statSync(format_layout(dir)).isFile()
-    unless dir then throw new Error 'Cannot locate layout'
+    unless dir then throw new Error "Cannot locate layout"
     else @applyTemplate format_layout(dir), payload
 
   processFile: (file) ->
     unless @_shouldProceed(file.path) then return
-
     payload = @grabFrontAndContent file.data
     @_ensureFields(payload)
-
     payload.content = @applyLayoutContentTransform(payload)
-
     destination = @_findDestination(file, payload)
-
     mkdirp.sync destination.dir
+    fs.writeFileSync destination.path, payload.content
 
     @tree.insert destination.path, payload
 
-    fs.writeFileSync destination.path, payload.content
-
   onCompile: (args...) ->
-    console.log @tree.index()
+    @tree.index()

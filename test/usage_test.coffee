@@ -1,5 +1,6 @@
 fs = require 'fs'
 {assert, expect} = require 'chai'
+mockfs = require 'mock-fs'
 
 ClumsyBrunch = require '../src/index'
 
@@ -118,6 +119,24 @@ describe 'ClumsyBrunch within Fixture', ->
             name: 'index'
             path: 'public/blog/2016/06/10/hello-world/index.html'
 
+    it 'should respect when path is explicitly given', ->
+      payload.path = 'foobar'
+      expect(cb._findDestination file, payload)
+          .to.deep.equal
+            dir: 'public/foobar'
+            name: 'doc'
+            path: 'public/foobar/doc.html'
+      payload.path = null
+
+    it 'should not wrap within directory if configured', ->
+      cb.wrapHTML = no
+      expect(cb._findDestination file, payload)
+          .to.deep.equal
+            dir: 'public/blog/2016/06/10'
+            name: 'hello-world'
+            path: 'public/blog/2016/06/10/hello-world.html'
+      cb.wrapHTML = yes
+
   describe '#_ensureFields', ->
     it 'should be ok if `path` is explicitly provided', ->
       expect(cb._ensureFields path: 'foo').to.be.ok
@@ -138,6 +157,7 @@ describe 'ClumsyBrunch within Fixture', ->
     it 'should apply transformation in usual cases', ->
       cb2 = new ClumsyBrunch conf
       cb2.paths.watched.push 'test'
+      cb2.paths.content = 'data'
       cb2.paths.layouts = 'data'
       payload =
         layout: 'layout'
@@ -155,4 +175,32 @@ describe 'ClumsyBrunch within Fixture', ->
         </body>
       </html>
       """
+
       expect(cb2.applyLayoutContentTransform payload).to.equal(output)
+
+  describe '#processFile', ->
+    beforeEach -> mockfs 'test/data/layout.jade': 'html'
+    afterEach -> mockfs.restore()
+
+    it 'should create dirs and write to wrapped dir', ->
+      cb2 = new ClumsyBrunch conf
+      cb2.paths.watched.push 'test'
+      cb2.paths.content = 'data'
+      cb2.paths.layouts = 'data'
+
+      cb2.processFile path: 'test/data/sample_doc.md', data: sample_doc
+      dest = 'public/blog/2016/06/10/hello-world/index.html'
+
+      expect(fs.statSync dest).to.satisfy (stat) -> stat.isFile()
+      expect(fs.readFileSync dest, 'utf-8').to.equal('\n<html></html>')
+
+    it 'should not process files outside content dir', ->
+      expect(cb.processFile path: 'nah/bro/doc.md', data: '').to.be.undefined
+
+  describe '#compile', ->
+    it 'should call processFile method', ->
+      expect(cb.compile(path: '42')).to.be.ok
+
+  describe '#onCompile', ->
+    it 'should build the object tree', ->
+      expect(cb.onCompile()).to.be.ok

@@ -66,6 +66,11 @@ describe 'Tree', ->
           .to.equal('foo/bar/baz.html')
       expect(tree.children().foo.children().bar.url()).to.equal('foo/bar')
 
+  describe '#content', ->
+    it 'throws error when content is called on a dir', ->
+      tree.insert 'baz'
+      expect(-> tree.content()).to.throw(TypeError)
+
   describe '#index', ->
     it 'gets flat file tree', ->
       tree.insert 'foo/bar'
