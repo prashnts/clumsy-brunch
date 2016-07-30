@@ -92,3 +92,38 @@ describe 'ClumsyBrunch', ->
 
       data = cb.grabFrontAndContent input_md
       expect(cb.applyTemplate jade_template, data).to.equal output
+
+
+describe 'ClumsyBrunch within Fixture', ->
+  conf_file_data = fs.readFileSync 'test/data/sample.conf.json', 'utf-8'
+  conf = JSON.parse conf_file_data
+  sample_doc = fs.readFileSync 'test/data/sample_doc.md', 'utf-8'
+  cb = new ClumsyBrunch conf
+
+  describe '#_shouldProceed', ->
+    it 'should only proceed for files within content directory', ->
+      expect(cb._shouldProceed('app/content/doc.md')).to.be.true
+      expect(cb._shouldProceed('app/somewhere/doc.md')).to.be.false
+      expect(cb._shouldProceed('test/content/doc.md')).to.be.true
+      expect(cb._shouldProceed('huh/somewhere/doc.md')).to.be.false
+
+  describe '#_findDestination', ->
+    file = path: 'app/content/doc.md', data: sample_doc
+    payload = cb.grabFrontAndContent sample_doc
+
+    it 'should return correct destination of payload', ->
+      expect(cb._findDestination file, payload)
+          .to.deep.equal
+            dir: 'public/blog/2016/06/10/hello-world'
+            name: 'index'
+            path: 'public/blog/2016/06/10/hello-world/index.html'
+
+  describe '#_ensureFields', ->
+    it 'should be ok if `path` is explicitly provided', ->
+      expect(cb._ensureFields path: 'foo').to.be.ok
+    it 'should be ok if `title` and `date` are present', ->
+      expect(cb._ensureFields title: 'foo', published: 'bar').to.be.o
+    it 'should throw error in all other cases', ->
+      expect(-> cb._ensureFields(foo: 'bar')).to.throw(Error)
+
+  describe '#_ensureLayoutContentTransform', ->

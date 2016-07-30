@@ -26,6 +26,9 @@ module.exports = class ClumsyBrunch
     public: 'public'
     root: 'blog'
 
+  layouts:
+    list: 'listing.jade'
+
   fields:
     title: 'title'
     date: 'published'
@@ -73,53 +76,62 @@ module.exports = class ClumsyBrunch
     @processFile(file)
     Promise.resolve()
 
-  processFile: (file) ->
-    proceed = @paths.watched.reduce(
+  _shouldProceed: (path) ->
+    @paths.watched.reduce(
       (prev, curr) =>
-        prev or file.path.startsWith("#{curr}/#{@paths.content}")
+        prev or path.startsWith("#{curr}/#{@paths.content}")
       no
     )
-    unless proceed then return
+
+  _findDestination: (file, payload) ->
+    base_name = path.basename(file.path, ".#{@extension}")
+    dir_name = "#{@paths.public}"
+    if payload.path?
+      dir_name += "/#{payload.path}"
+    else
+      slug_name = slug(payload[@fields.title], @slug)
+      date_dirs = moment(payload[@fields.date]).format('Y/MM/DD')
+      dir_name += "/#{@paths.root}/#{date_dirs}"
+      if @wrapHTML
+        dir_name += "/#{slug_name}"
+        base_name = 'index'
+      else
+        base_name = slug_name
+    return {
+      dir: dir_name
+      name: base_name
+      path: "#{dir_name}/#{base_name}.#{@outExtension}"
+    }
+
+  _ensureFields: (payload) ->
+    hasProp = (key) -> _has payload, key
+    if hasProp('path') or (hasProp(@fields.title) and hasProp(@fields.date))
+      return yes
+    throw new Error 'Payload missing required props.'
+
+  _ensureLayoutContentTransform: (payload) ->
+    unless payload.layout? then return payload.content
+    format_layout = (dir) => "#{dir}/#{@paths.layouts}/#{payload.layout}.jade"
+    dir = _find @paths.watched, (dir) ->
+      fs.statSync(format_layout(dir)).isFile()
+    unless dir then throw new Error 'Cannot locate layout'
+    else @applyTemplate format_layout(dir), payload
+
+  processFile: (file) ->
+    unless @_shouldProceed(file.path) then return
 
     payload = @grabFrontAndContent file.data
+    @_ensureFields(payload)
 
-    unless payload.path? or not _has(payload, [@fields.title, @fields.date])
-      throw error: 'Required fields not found'
+    payload.content = @_ensureLayoutContentTransform(payload)
 
-    if payload.layout?
-      format_layout = (dir) => "#{dir}/#{@paths.layouts}/#{payload.layout}.jade"
-      dir = _find @paths.watched, (dir) ->
-        fs.statSync(format_layout(dir)).isFile()
-
-      unless dir then throw error: 'Cannot locate layout'
-
-      payload.content = @applyTemplate format_layout(dir), payload
-
-    destination = do =>
-      base_name = path.basename(file.path, ".#{@extension}")
-      dir_name = "#{@paths.public}"
-      if payload.path?
-        dir_name += "/#{payload.path}"
-      else
-        slug_name = slug(payload[@fields.title], @slug)
-        date_dirs = moment(payload[@fields.date]).format('Y/MM/DD')
-        dir_name += "/#{@paths.root}/#{date_dirs}"
-
-        if @wrapHTML
-          dir_name += "/#{slug_name}"
-          base_name = 'index'
-        else
-          base_name = slug_name
-
-      return dir: dir_name, name: base_name
+    destination = @_findDestination(file, payload)
 
     mkdirp.sync destination.dir
 
-    outfile = "#{destination.dir}/#{destination.name}.#{@outExtension}"
+    @tree.insert destination.path, payload
 
-    @tree.insert outfile, payload
-
-    fs.writeFileSync outfile, payload.content
+    fs.writeFileSync destination.path, payload.content
 
   onCompile: (args...) ->
     console.log @tree.index()
