@@ -1,5 +1,5 @@
 fs = require 'fs'
-{assert, expect} = require 'chai'
+{expect} = require 'chai'
 mockfs = require 'mock-fs'
 
 ClumsyBrunch = require '../src/index'
@@ -10,20 +10,19 @@ describe 'ClumsyBrunch', ->
   fldata = fs.readFileSync 'test/data/sample_trivial.md', 'utf-8'
 
   it 'should be a brunch plugin', ->
-    assert.isTrue cb.brunchPlugin
+    expect(cb.brunchPlugin).to.be.an 'object'
   it 'should be typed as "template"', ->
-    assert.equal 'template', cb.type
+    expect(cb.type).to.equal 'template'
 
   describe '#grabFrontAndContent', ->
     it 'should return an object', ->
-      assert.isObject cb.grabFrontAndContent ''
+      expect(cb.grabFrontAndContent '').to.be.an 'object'
 
     it 'extracts the yaml frontmatter', ->
       result = cb.grabFrontAndContent fldata
-      assert.equal 'bar', result.foo
-      assert.equal 10, result.baz
-      assert.deepEqual ['bah', 'humbug'], result.bok
-
+      expect(result.foo).to.equal 'bar'
+      expect(result.baz).to.equal 10
+      expect(result.bok).to.deep.equal ['bah', 'humbug']
       expect(result.content).to.be.a('string').and.have.length.above(10)
 
   describe '#compileMarkdown', ->
