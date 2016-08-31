@@ -10,7 +10,7 @@ describe 'ClumsyBrunch', ->
   fldata = fs.readFileSync 'test/data/sample_trivial.md', 'utf-8'
 
   it 'should be a brunch plugin', ->
-    expect(cb.brunchPlugin).to.be.an 'object'
+    expect(cb).to.be.an 'object'
   it 'should be typed as "template"', ->
     expect(cb.type).to.equal 'template'
 
